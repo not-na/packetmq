@@ -26,7 +26,7 @@ import umsgpack as msgpack
 
 PROTOCOL_VERSION = 1
 
-def dprint(msg):
+def dprint(msg): # pylint:disable=unused-argument
     pass # Added to stop landscape.io complaining about undefined methods, will be overriden upon import by packetmq.dprint
 
 class BasePacket(object):
@@ -52,14 +52,14 @@ class BasePacket(object):
         return self.onSend(data,to,fromobj,*args,**kwargs)
     
     # Callbacks
-    def onEncode(self,data,to=-1):
+    def onEncode(self,data,to=-1): # pylint:disable=unused-argument
         """Callback to be overriden by subclasses.
         
         Called before every encoding.
         
         :param obj data: Non-Encoded payload"""
         return data
-    def onSend(self,data,to,fromobj,*args,**kwargs):
+    def onSend(self,data,to,fromobj,*args,**kwargs): # pylint:disable=unused-argument
         """Callback to be overriden by subclasses.
         
         Called before every send.
