@@ -1,0 +1,14 @@
+*.pyc
+*~
+~*
+
+*.log
+
+_trial_temp/*
+build/*
+dist/*
+tests/*
+
+MANIFEST
+
+docs/build/*
