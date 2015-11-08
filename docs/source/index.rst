@@ -6,6 +6,10 @@
 Welcome to packetmq's documentation!
 ====================================
 
+.. image:: https://landscape.io/github/not-na/packetmq/master/landscape.svg?style=flat
+   :target: https://landscape.io/github/not-na/packetmq/master
+   :alt: Code Health
+
 Contents:
 
 .. toctree::

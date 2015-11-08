@@ -24,15 +24,11 @@
 
 import time
 
-import curses
-import curses.wrapper
-import curses.panel
-
 from twisted.internet import reactor
 
 import packetmq
 
-from common import *
+from common import Client,ChatMsgPacket,ChatPubMsgPacket,ChatSendCmdPacket
 
 ADDR = ("localhost",8080)
 

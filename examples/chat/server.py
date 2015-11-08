@@ -28,12 +28,12 @@ from twisted.internet import reactor
 
 import packetmq
 
-from common import *
+from common import Server,ChatMsgPacket,ChatPubMsgPacket,ChatSendCmdPacket
 
 PORT = 8080
 
 def init():
-    global reg,ADDR,server
+    global reg,server
     reg = packetmq.PacketRegistry()
     reg.registerDefaultPackets()
     
