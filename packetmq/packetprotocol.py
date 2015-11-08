@@ -31,7 +31,7 @@ import bidict
 from twisted.internet.protocol import Factory, ClientFactory, Protocol
 from twisted.protocols.basic import Int32StringReceiver
 
-def dprint(msg):
+def dprint(msg): # pylint:disable=unused-argument
     pass # Added to stop landscape.io complaining about undefined methods, will be overriden upon import by packetmq.dprint
 
 

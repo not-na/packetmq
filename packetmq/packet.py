@@ -73,12 +73,12 @@ class BasePacket(object):
         #print("*args : %s"%args)
         dprint("kwargs: %s"%kwargs)
         return [data,to,fromobj]
-    def onDecode(self,data,fromid=-1): # pylint disable=unused-argument
+    def onDecode(self,data,fromid=-1): # pylint:disable=unused-argument
         """Callback to be overriden by subclasses.
         
         Called before every decoding."""
         return data
-    def onReceive(self,packet,fromid,to,*args,**kwargs): # pylint disable=unused-argument
+    def onReceive(self,packet,fromid,to,*args,**kwargs): # pylint:disable=unused-argument
         """Callback to be overriden by subclasses.
         
         Called on every received packet of this type.
