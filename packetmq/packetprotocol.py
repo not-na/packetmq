@@ -22,7 +22,7 @@
 #  
 #  
 
-# pylint disable=unused-argument
+# pylint: disable=W0613
 
 import threading
 
@@ -72,7 +72,7 @@ class PacketFactory(Factory):
         self.cllock = threading.Lock()
     def startedConnecting(self,arg):
         pass
-    def buildProtocol(self,addr): # pylint disable=unused-argument
+    def buildProtocol(self,addr): # pylint:disable=unused-argument
         return self.proto(self.parent)
     def addClient(self,client):
         self.cllock.acquire()
@@ -95,7 +95,7 @@ class ClientPacketFactory(ClientFactory):
         self.cllock = threading.Lock()
     def startedConnecting(self,arg):
         pass
-    def buildProtocol(self,addr): # pylint disable=unused-argument
+    def buildProtocol(self,addr): # pylint:disable=unused-argument
         return self.proto(self.parent)
     def addClient(self,client):
         self.cllock.acquire()
@@ -118,7 +118,7 @@ class MemoryPacketProtocol(Protocol):
     def connectionMade(self):
         self.parent.initConnection(self)
         self.parent.factory.addClient(self)
-    def connectionLost(self,reason): # pylint disable=unused-argument
+    def connectionLost(self,reason): # pylint:disable=unused-argument
         self.parent.factory.delClient(self)
     def sendEncoded(self,data):
         self.parent.recvEncoded(data)
@@ -135,7 +135,7 @@ class MemoryPacketFactory(Factory):
         self.clients = bidict.bidict()
         self.sesscounter = 0
         self.cllock = threading.Lock()
-    def buildProtocol(self,addr): # pylint disable=unused-argument
+    def buildProtocol(self,addr): # pylint:disable=unused-argument
         return self.proto(self.parent)
     def addClient(self,client):
         self.cllock.acquire()
@@ -156,7 +156,7 @@ class MemoryClientPacketFactory(ClientFactory):
         self.clients = bidict.bidict()
         self.sesscounter = 0
         self.cllock = threading.Lock()
-    def buildProtocol(self,addr): # pylint disable=unused-argument
+    def buildProtocol(self,addr): # pylint:disable=unused-argument
         return self.proto(self.parent)
     def addClient(self,client):
         self.cllock.acquire()
