@@ -22,6 +22,8 @@
 #  
 #  
 
+# pylint disable=unused-argument
+
 import threading
 
 import bidict
