@@ -7,7 +7,6 @@ cache:
  directories:
   - $HOME/.cache/pip
 
-install: "pip install -r requirements.txt"
 script:
  - "trial --reporter=text --rterrors packetmq.test.MemServerTestCase"
  - "trial --reporter=text --rterrors packetmq.test.PacketRegistryTestCase"
