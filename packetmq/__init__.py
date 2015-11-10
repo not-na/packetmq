@@ -62,7 +62,7 @@ class PacketRegistry(object):
         self.reg_name_obj = bidict.bidict()
         self.packetId = self.packetInt
         self.adaptivePacketIds = adaptPacketIds
-    def addPacket(self,name,obj,numid=None,bypass_assert=False):
+    def addPacket(self,name,obj,numid,bypass_assert=False):
         assert MIN_PACKET_ID<=numid<=MAX_PACKET_ID or bypass_assert
         self.reg_name_int[name]=numid
         self.reg_name_obj[name]=obj
@@ -179,6 +179,7 @@ class Peer(object):
     def softquit(self,peer,reason="reason.unknown"):
         peerobj = self.peerObj(peer)
         peerobj.setState("softquitted")
+        self.lostConnection(peer,reason)
         self.sendPacket({"reason":reason},"packetmq:softquit",peer)
     def on_connMade(self,conn):
         dprint("Connection Made peer=%s"%self.peerFileno(conn))

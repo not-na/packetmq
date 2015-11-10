@@ -44,7 +44,7 @@ class PacketProtocol(Int32StringReceiver):
         dprint("Connection Made...")
         self.parent.initConnection(self)
         self.parent.factory.addClient(self)
-    def connectionLost(self,reason):
+    def connectionLost(self,reason=None): # pylint:disable=unused-argument
         self.setState("disonnected")
         self.parent.lostConnection(self,reason)
         self.parent.factory.delClient(self)
@@ -118,7 +118,7 @@ class MemoryPacketProtocol(Protocol):
     def connectionMade(self):
         self.parent.initConnection(self)
         self.parent.factory.addClient(self)
-    def connectionLost(self,reason): # pylint:disable=unused-argument
+    def connectionLost(self,reason=None): # pylint:disable=unused-argument
         self.parent.factory.delClient(self)
     def sendEncoded(self,data):
         self.parent.recvEncoded(data)
