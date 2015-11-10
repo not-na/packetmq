@@ -10,10 +10,10 @@ packet-based message-framing network library built with Twisted
 
 Installing through the Python Package Index:
 
-    sudo pip install packetmq
+    $ sudo pip install packetmq
 OR
 
-    sudo easy_install packetmq
+    $ sudo easy_install packetmq
 
 ### Requirements
 
