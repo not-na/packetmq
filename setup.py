@@ -37,7 +37,7 @@ setup(name='packetmq',
                 ],
       package_data={'packetmq': ['docs/source/*']},
       requires=["twisted>=15.4.0","u-msgpack-python>=2.1","bidict>=0.9.0.post1"],
-      provides=["packetmq"]
+      provides=["packetmq"],
       classifiers=["Development Status :: 4 - Beta",
                    "Framework :: Twisted",
                    "Intended Audience :: Developers",
