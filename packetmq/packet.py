@@ -21,8 +21,13 @@
 #  MA 02110-1301, USA.
 #  
 #  
-
-import umsgpack as msgpack
+try:
+    import umsgpack as msgpack
+except ImportError:
+    try:
+        import msgpack
+    except ImportError:
+        raise ImportError("No msgpack module was found!!")
 
 PROTOCOL_VERSION = 1
 
@@ -95,6 +100,22 @@ class BasePacket(object):
 
 class Packet(BasePacket):
     pass
+
+class EchoPacket(Packet):
+    def __init__(self,retType):
+        super(EchoPacket,self).__init__()
+        self.retType = retType
+    def onReceive(self,packet,fromid,to,*args,**kwargs):
+        super(EchoPacket,self).onReceive(packet,fromid,to,*args,**kwargs)
+        print("Received EchoPacket: %s"%packet)
+        to.sendPacket(packet,self.retType,fromid)
+        return [packet,fromid,to]
+
+class PrintPacket(Packet):
+    def onReceive(self,packet,fromid,to,*args,**kwargs):
+        super(PrintPacket,self).onReceive(packet,fromid,to,*args,**kwargs)
+        print("Received packet from client #%s: %s"%(to.peerFileno(fromid),packet))
+        return [packet,fromid,to] 
 
 class InternalPacket(Packet):
     def __init__(self):

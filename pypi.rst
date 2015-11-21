@@ -6,6 +6,10 @@
    :target: http://packetmq.readthedocs.org/en/latest/?badge=latest
    :alt: Documentation Status
 
+.. image:: https://img.shields.io/pypi/dd/packetmq.svg
+   :target: https://pypi.python.org/pypi?name=packetmq&:action=display
+   :alt: PyPi
+
 .. image:: https://landscape.io/github/not-na/packetmq/master/landscape.svg?style=flat
    :target: https://landscape.io/github/not-na/packetmq/master
    :alt: Code Health

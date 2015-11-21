@@ -132,6 +132,8 @@ Peer Base Class
       Calls :py:meth:`Peer.run()` in another thread.
       
       This call does not block, but you will still need to call :py:meth:`Peer.stop()`\ , else your program will continue running infinitely.
+      
+      If the main loop is started using this method, spawning subprocesses via twisted will not work, because their termination cannot be detected.
    
    .. py:method:: stop():
       
@@ -151,36 +153,88 @@ Peer Base Class
       
       `conn` can be any peer type, see :ref:`autotypes`\ . 
 
-.. _autotypes:
+TCP Servers and Clients
+-----------------------
 
-Auto-Types
-----------
-
-Auto-types are a mechanic supported by several classes in packetmq.
-
-Auto-Types allows you to convert easily between different representations of an object.
-Conversion is done via a set of methods, internally using bidicts.
-The conversion methods are usually named after a scheme, e.g. `<object><type to convert to>()`\ .
-
-Example::
+.. py:class:: Server(registry[,proto[,factory]]):
    
-   >>> registry.packetObj(obj)
-   obj
-   >>> registry.packetObj(name)
-   obj
-   >>> registry.packetObj(numid)
-   obj
-   >>> registry.packetStr(obj)
-   name
-   >>> registry.packetStr(name)
-   name
-   >>> registry.packetStr(numid)
-   name
-   >>> registry.packetInt(obj)
-   numid
-   >>> registry.packetInt(name)
-   numid
-   >>> registry.packetInt(numid)
-   numid
+   TCP Server class powered by twisted. This class is a subclass of :py:class:`Peer`\ .
+   
+   `registry` must be an instance of :py:class:`PacketRegistry` or subclass.
+   
+   `proto` and `factory` are used for creating new connections. You normally do not need to change these.
+   
+   .. py:method:: listen(port):
+      
+      Listen to TCP port `port`\ .
+      
+      You can call this method multiple times to listen to multiple ports.
 
-This is a simplified example based on :py:class:`PacketRegistry`\ .
+.. py:class:: Client(registry[,proto[,factory)]:
+   
+   TCP Client class powered by twisted. This class is a subclass of :py:class:`Peer`\ .
+   
+   `registry` must be an instance of :py:class:`PacketRegistry` or subclass.
+   
+   `proto` and `factory` are used for creating new connections. You normally do not need to change these.
+   
+   
+   Most methods that require a peer will default to the first connected server.
+   This applies to following methods:
+   
+   * :py:meth:`sendPacket() <packetmq.Peer.sendPacket>`
+   * :py:meth:`sendEncoded() <packetmq.Peer.sendEncoded>`
+   * :py:meth:`recvPacket() <packetmq.Peer.recvPacket>`
+   * :py:meth:`recvEncoded() <packetmq.Peer.recvEncoded>`
+   
+   .. py:method:: connect(address):
+      
+      Connects to TCP address tuple `address`\ .
+      
+      `address` is a tuple of `(host,port)`\ .
+
+Memory Servers and Clients
+--------------------------
+
+All memory servers and clients also have :py:meth:`setState() <packetmq.packetprotocol.PacketProtocol.setState>` and :py:meth:`getState() <packetmq.packetprotocol.PacketProtocol.getState>` state methods, for compatibility with :py:class:`PacketProtocol <packetmq.packetprotocol.PacketProtocol>`\ .
+
+.. py:class:: MemoryServer(registry[,proto[,factory]]):
+   
+   Memory Server class for in-process data transmission. This class is a subclass of :py:class:`Peer`\ .
+   
+   `registry` must be an instance of :py:class:`PacketRegistry` or subclass.
+   
+   `proto` is not used since all connections are in-memory.
+   
+   `factory` is used for storing active connections.
+   
+   .. py:method:: connectClient(client):
+      
+      Connects client `client` to the server.
+      
+      This method should not be used manually, use :py:meth:`MemoryClient.connect()` instead.
+   
+   .. py:method:: disconnectClient(client):
+      
+      Disconnects client `client` from the server.
+      
+      This method should not be used manually, use :py:meth:`MemoryClient.disconnect()` instead.
+
+.. py:class:: MemoryClient(registry[,proto[,factory]]):
+   
+   Memory Client class for in-process data transmission. This class is a subclass of :py:class:`Peer`\ .
+   
+   `registry` must be an instance of :py:class:`PacketRegistry` or subclass.
+   
+   `proto` is not used since all connections are in-memory.
+   
+   `factory` is used for storing active connections.
+   
+   .. py:method:: connect(server):
+      
+      Connects the client with the server `server`\ .
+   
+   .. py:method:: disconnect([server]):
+      
+      Terminates the connection to server `server` and calls all appropriate callbacks.
+   

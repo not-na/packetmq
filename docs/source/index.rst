@@ -6,9 +6,15 @@
 Welcome to packetmq's documentation!
 ====================================
 
+.. badges START
+
 .. image:: https://readthedocs.org/projects/packetmq/badge/?version=latest
    :target: http://packetmq.readthedocs.org/en/latest/?badge=latest
    :alt: Documentation Status
+
+.. image:: https://img.shields.io/pypi/dd/packetmq.svg
+   :target: https://pypi.python.org/pypi?name=packetmq&:action=display
+   :alt: PyPi
 
 .. image:: https://landscape.io/github/not-na/packetmq/master/landscape.svg?style=flat
    :target: https://landscape.io/github/not-na/packetmq/master
@@ -20,12 +26,17 @@ Welcome to packetmq's documentation!
 .. image:: https://coveralls.io/repos/not-na/packetmq/badge.svg?branch=master&service=github
   :target: https://coveralls.io/github/not-na/packetmq?branch=master
 
+.. badges END
+
 Contents:
 
 .. toctree::
    :maxdepth: 2
    
+   gettingstarted
+   
    packetmq
+   autotypes
 
 
 

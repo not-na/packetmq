@@ -28,7 +28,7 @@ with open('pypi.rst') as file:
     long_description = file.read()
 
 setup(name='packetmq',
-      version='0.1.0a1',
+      version='0.1.1a1',
       description='Packet based networking',
       long_description=long_description,
       author='notna',
@@ -36,7 +36,7 @@ setup(name='packetmq',
       packages=['packetmq',
                 ],
       package_data={'packetmq': ['docs/source/*']},
-      requires=["twisted>=15.4.0","u-msgpack-python>=2.1","bidict>=0.9.0.post1"],
+      requires=["twisted","msgpack","bidict"],
       provides=["packetmq"],
       classifiers=["Development Status :: 4 - Beta",
                    "Framework :: Twisted",

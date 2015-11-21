@@ -137,7 +137,7 @@ class Peer(object):
         pobj = self.registry.packetObj(dtype)
         #import pdb;pdb.set_trace()
         dprint("Calling send callbacks...")
-        data,to = pobj.send(data,to,self)
+        data,to,fromobj = pobj.send(data,to,self)
         dprint("dtype: %s"%dtype)
         dprint("Encoding packet...")
         data = pobj.dataEncoded(data,to=to)
@@ -148,7 +148,7 @@ class Peer(object):
         dprint("SEND END")
     def sendEncoded(self,raw,to):
         dprint("Sending encoded...")
-        self.peerObj(to).sendEncoded(raw)
+        reactor.callFromThread(self.peerObj(to).sendEncoded,raw)
     def recvPacket(self,data,dtype,fromid):
         #dprint("recvPacket(%s,%s,%s)"%(data,dtype,fromid))
         dprint("recvPacket dtype=%s fromid=%s"%(self.registry.packetStr(dtype),self.peerFileno(fromid)))
@@ -169,11 +169,11 @@ class Peer(object):
         dprint("data: %s"%data)
         self.recvPacket(data,pobj,fromid)
     def runAsync(self):
-        self.thread = threading.Thread(name="Network thread",target=self.run)
+        self.thread = threading.Thread(name="Network reactor thread",target=self.run)
         self.thread.daemon = True
-        self.thread.run()
+        self.thread.start()
     def run(self):
-        reactor.run()
+        reactor.run(installSignalHandlers=0) # Will disable Signalhandlers and thus disable subprocesses, see docs for details
     def stop(self):
         reactor.stop()
     def softquit(self,peer,reason="reason.unknown"):
@@ -190,14 +190,11 @@ class Server(Peer):
     def __init__(self,registry,proto=packetprotocol.PacketProtocol,factory=packetprotocol.PacketFactory):
         super(Server,self).__init__(registry,proto,factory)
     def listen(self,port):
-        #self.endpoint = TCP4ServerEndpoint(reactor, port)
-        #self.endpoint.listen(self.factory)
         reactor.listenTCP(port,self.factory)
-        #reactor.listenTCP(port,self.factory) # call listenTCP two times to also listen IPv6 addresses
     def runAsync(self):
         self.thread = threading.Thread(name="Server thread",target=self.run)
         self.thread.daemon = True
-        self.thread.run()
+        self.thread.start()
 
 class MemoryServer(Server):
     def __init__(self,registry,proto=packetprotocol.MemoryPacketProtocol,factory=packetprotocol.MemoryPacketFactory):
@@ -209,7 +206,7 @@ class MemoryServer(Server):
     def getState(self):
         return self.state
     def listen(self,port):
-        pass
+        raise NotImplementedError("Listen is not allowed on MemoryServers")
     def connectClient(self,client):
         self.factory.addClient(client)
         client.factory.addClient(self)
@@ -237,7 +234,7 @@ class Client(Peer):
     def runAsync(self):
         self.thread = threading.Thread(name="Client thread",target=self.run)
         self.thread.daemon = True
-        self.thread.run()
+        self.thread.start()
     def sendPacket(self,data,dtype,to=None):
         if to is None:
             to = self.default_peer
@@ -272,6 +269,7 @@ class MemoryClient(Client):
     def disconnect(self,server=None):
         if server is None:
             server = self.default_peer
+        self.lostConnection(server,"reason.generic")
         server.disconnectClient(self)
     def sendPacket(self,data,dtype,to=None):
         if to is None:
