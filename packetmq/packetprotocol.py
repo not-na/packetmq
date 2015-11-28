@@ -82,7 +82,7 @@ class PacketFactory(Factory):
     def delClient(self,client):
         self.cllock.acquire()
         if client in self.clients.values():
-            del self.clients[:client]
+            del self.clients.inv[client]
         self.cllock.release()
 
 class ClientPacketFactory(ClientFactory):
@@ -105,7 +105,7 @@ class ClientPacketFactory(ClientFactory):
     def delClient(self,client):
         self.cllock.acquire()
         if client in self.clients.values():
-            del self.clients[:client]
+            del self.clients.inv[client]
         self.cllock.release()
 
 # Memory Protocols
@@ -145,7 +145,7 @@ class MemoryPacketFactory(Factory):
     def delClient(self,client):
         self.cllock.acquire()
         if client in self.clients.values():
-            del self.clients[:client]
+            del self.clients.inv[client]
         self.cllock.release()
 
 class MemoryClientPacketFactory(ClientFactory):
@@ -166,5 +166,5 @@ class MemoryClientPacketFactory(ClientFactory):
     def delClient(self,client):
         self.cllock.acquire()
         if client in self.clients.values():
-            del self.clients[:client]
+            del self.clients.inv[client]
         self.cllock.release()

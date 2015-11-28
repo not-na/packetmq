@@ -182,6 +182,6 @@ class MemServerTestCase(unittest.TestCase):
     def test_disconnect(self):
         self.client.disconnect()
         
-        self.assertRaises(KeyError,self.client.sendPacket,{"foo":"bar"},"packetmq:test")
+        self.assertRaises(ValueError,self.client.sendPacket,{"foo":"bar"},"packetmq:test")
         
         self.assertRaises(KeyError,self.server.sendPacket,{"foo":"bar"},"packetmq:test",0)

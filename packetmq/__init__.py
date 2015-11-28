@@ -73,9 +73,9 @@ class PacketRegistry(object):
         if isinstance(arg,str):
             return arg
         elif isinstance(arg,int):
-            return self.reg_name_int[:arg]
+            return self.reg_name_int.inv[arg]
         elif isinstance(arg,packet.BasePacket):
-            return self.reg_name_obj[:arg]
+            return self.reg_name_obj.inv[arg]
         else:
             raise TypeError("Invalid type %s"%type(arg))
     packetName = packetStr
@@ -85,14 +85,14 @@ class PacketRegistry(object):
         elif isinstance(arg,str):
             return self.reg_name_int[arg]
         elif isinstance(arg,packet.BasePacket):
-            return self.reg_name_int[self.reg_name_obj[:arg]]
+            return self.reg_name_int[self.reg_name_obj.inv[arg]]
         else:
             raise TypeError("Invalid type %s"%type(arg))
     def packetObj(self,arg):
         if isinstance(arg,packet.BasePacket):
             return arg
         elif isinstance(arg,int):
-            return self.reg_name_obj[self.reg_name_int[:arg]]
+            return self.reg_name_obj[self.reg_name_int.inv[arg]]
         elif isinstance(arg,str):
             return self.reg_name_obj[arg]
         else:
@@ -112,7 +112,7 @@ class Peer(object):
         if isinstance(arg,int):
             return arg
         elif isinstance(arg,packetprotocol.PacketProtocol) or isinstance(arg,Peer):
-            return self.factory.clients[:arg]
+            return self.factory.clients.inv[arg]
         else:
             raise TypeError("Invalid type %s"%type(arg))
     def peerObj(self,arg):
