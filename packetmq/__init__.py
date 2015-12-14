@@ -276,7 +276,7 @@ class MemoryClient(Client):
             to = self.default_peer
         pobj = self.registry.packetObj(dtype)
         dprint("Calling send callbacks...")
-        data,to = pobj.send(data,to,self)
+        data,to,fromobj = pobj.send(data,to,self)
         dprint("dtype: %s"%dtype)
         self.peerObj(to).recvPacket(data,dtype,self)
     def sendEncoded(self,raw,to=None):

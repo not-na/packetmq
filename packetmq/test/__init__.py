@@ -115,23 +115,29 @@ class PacketRegistryTestCase(unittest.TestCase):
 
 class TCPServerTestCase(unittest.TestCase):
     def setUp(self):
-        self.reg = packetmq.PacketRegistry()
-        self.reg.registerDefaultPackets()
+        self.regs = packetmq.PacketRegistry()
+        self.regs.registerDefaultPackets()
+        
+        self.regc = packetmq.PacketRegistry(adaptPacketIds=True)
+        self.regc.registerDefaultPackets()
         
         self.testpacket = TestPacket()
-        self.reg.addPacket("packetmq:test",self.testpacket,17)
+        self.regc.addPacket("packetmq:test",self.testpacket,17)
+        self.regs.addPacket("packetmq:test",self.testpacket,17)
         
-        self.server = packetmq.Server(self.reg)
+        self.server = packetmq.Server(self.regs)
         
         self.proto = self.server.factory.buildProtocol(('127.0.0.1', 0))
         self.tr = proto_helpers.StringTransport()
         
-        self.client = packetmq.Client(self.reg)
+        self.client = packetmq.Client(self.regc)
         self.client.factory.clients[0]=self.proto
         
-        self.proto.makeConnection(self.tr)
         self.proto.transport = self.tr
         self.proto.sendString = self.proto.stringReceived
+        
+        self.proto.makeConnection(self.tr)
+        self.proto.connectionMade()
         
         time.sleep(0.5)
     
@@ -182,6 +188,6 @@ class MemServerTestCase(unittest.TestCase):
     def test_disconnect(self):
         self.client.disconnect()
         
-        self.assertRaises(ValueError,self.client.sendPacket,{"foo":"bar"},"packetmq:test")
+        self.assertRaises(TypeError,self.client.sendPacket,{"foo":"bar"},"packetmq:test")
         
         self.assertRaises(KeyError,self.server.sendPacket,{"foo":"bar"},"packetmq:test",0)

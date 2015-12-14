@@ -36,6 +36,7 @@ setup(name='packetmq',
       packages=['packetmq',
                 ],
       package_data={'packetmq': ['docs/source/*']},
+      data_files=[(".",["pypi.rst", "README.md", "requirements.txt"])]
       requires=["twisted","msgpack","bidict"],
       provides=["packetmq"],
       classifiers=["Development Status :: 4 - Beta",
