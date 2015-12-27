@@ -30,7 +30,7 @@ with open('pypi.rst') as file:
 setup(name='packetmq',
       version='0.1.3',
       description='Packet based networking',
-      url="http://packetmq.readthedocs.org/en/latest/"
+      url="http://packetmq.readthedocs.org/en/latest/",
       long_description=long_description,
       author='notna',
       author_email='notna@apparat.org',
@@ -57,5 +57,6 @@ setup(name='packetmq',
                    "Topic :: Software Development",
                    "Topic :: Software Development :: Libraries",
                    "Topic :: Software Development :: Libraries :: Python Modules",
-                   ]
+                   ],
+    keywords="bidict,packet,packetmq,twisted,tcp,socket,network",
      )
