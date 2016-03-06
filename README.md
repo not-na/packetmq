@@ -1,4 +1,6 @@
 # packetmq
+
+[![Join the chat at https://gitter.im/not-na/packetmq](https://badges.gitter.im/not-na/packetmq.svg)](https://gitter.im/not-na/packetmq?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 packet-based message-framing network library built with Twisted
 
 [![Documentation Status](http://readthedocs.org/projects/packetmq/badge/?version=latest)](http://packetmq.readthedocs.org/en/latest/?badge=latest)
