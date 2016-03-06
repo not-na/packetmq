@@ -116,7 +116,7 @@ class ClientPacketFactory(ClientFactory):
 # Memory Protocols
 
 @implementer(IAddress)
-class MemoryAddress():
+class MemoryAddress(object):
     def __init__(self):
         self.host = "memory:0"
 
