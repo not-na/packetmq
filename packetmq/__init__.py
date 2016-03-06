@@ -24,7 +24,6 @@
 #  
 
 try:
-    #from twisted.internet.endpoints import TCP4ServerEndpoint
     from twisted.internet import reactor
 except ImportError:
     pass
@@ -34,8 +33,8 @@ import struct
 
 import bidict
 
-import packetprotocol
-import packet
+import packetmq.packetprotocol as packetprotocol
+import packetmq.packet as packet
 
 PROTOCOL_VERSION = packet.PROTOCOL_VERSION
 
@@ -64,6 +63,8 @@ class PacketRegistry(object):
         self.adaptivePacketIds = adaptPacketIds
     def addPacket(self,name,obj,numid,bypass_assert=False):
         assert MIN_PACKET_ID<=numid<=MAX_PACKET_ID or bypass_assert
+        obj.setName(name)
+        obj.setNumid(numid)
         self.reg_name_int[name]=numid
         self.reg_name_obj[name]=obj
     def delPacket(self,arg):
@@ -108,10 +109,19 @@ class Peer(object):
         self.registry = registry
         self.factory = factory(self,proto)
         self.skip_handshake = False
+        self.packetlogging = False
+        self.log_recv = []
+        self.log_send = []
+    def clearPacketLog(self):
+        self.log_recv = []
+        self.log_send = []
     def peerFileno(self,arg):
         if isinstance(arg,int):
             return arg
         elif isinstance(arg,packetprotocol.PacketProtocol) or isinstance(arg,Peer):
+            #print self.factory.clients
+            #print self
+            #print
             return self.factory.clients.inv[arg]
         else:
             raise TypeError("Invalid type %s"%type(arg))
@@ -146,15 +156,19 @@ class Peer(object):
         dprint("Start sending...")
         self.sendEncoded(raw,to)
         dprint("SEND END")
+        if self.packetlogging:
+            self.log_send.append([data,dtype,to])
     def sendEncoded(self,raw,to):
         dprint("Sending encoded...")
         reactor.callFromThread(self.peerObj(to).sendEncoded,raw)
     def recvPacket(self,data,dtype,fromid):
         #dprint("recvPacket(%s,%s,%s)"%(data,dtype,fromid))
-        dprint("recvPacket dtype=%s fromid=%s"%(self.registry.packetStr(dtype),self.peerFileno(fromid)))
+        #dprint("recvPacket dtype=%s fromid=%s"%(self.registry.packetStr(dtype),self.peerFileno(fromid)))
         pobj = self.registry.packetObj(dtype)
         if self.peerObj(fromid).getState()=="active" or pobj.bypassStateCheck:
             pobj.recv(data,fromid,self)
+            if self.packetlogging:
+                self.log_recv.append([data,dtype,fromid])
         else:
             dprint("Invalid state %s for recv"%self.peerObj(fromid))
     def recvEncoded(self,data,fromid):
@@ -169,11 +183,11 @@ class Peer(object):
         dprint("data: %s"%data)
         self.recvPacket(data,pobj,fromid)
     def runAsync(self):
-        self.thread = threading.Thread(name="Network reactor thread",target=self.run)
+        self.thread = threading.Thread(name="Network reactor thread",target=self.run,kwargs={"signalhandlers":0})
         self.thread.daemon = True
         self.thread.start()
-    def run(self):
-        reactor.run(installSignalHandlers=0) # Will disable Signalhandlers and thus disable subprocesses, see docs for details
+    def run(self,signalhandlers=1):
+        reactor.run(installSignalHandlers=signalhandlers) # Will disable Signalhandlers and thus disable subprocesses, see docs for details
     def stop(self):
         reactor.stop()
     def softquit(self,peer,reason="reason.unknown"):
@@ -201,6 +215,7 @@ class MemoryServer(Server):
         super(MemoryServer,self).__init__(registry,proto,factory)
         self.skip_handshake = True
         self.state = "connMade"
+        self.addr = packetprotocol.MemoryAddress()
     def setState(self,state):
         self.state = state
     def getState(self):
@@ -214,6 +229,8 @@ class MemoryServer(Server):
     def disconnectClient(self,client):
         self.factory.delClient(self.peerObj(client))
     def sendPacket(self,data,dtype,to):
+        if self.packetlogging:
+            self.log_send.append([data,dtype,to])
         self.peerObj(to).recvPacket(data,dtype,to)
     def sendEncoded(self,raw,to):
         self.peerObj(to).recvEncoded(raw,self)
@@ -257,6 +274,7 @@ class MemoryClient(Client):
         super(MemoryClient,self).__init__(registry,proto,factory)
         self.skip_handshake = True
         self.state = "connMade"
+        self.addr = packetprotocol.MemoryAddress()
     def setState(self,state):
         self.state = state
     def getState(self):
@@ -278,6 +296,8 @@ class MemoryClient(Client):
         dprint("Calling send callbacks...")
         data,to,fromobj = pobj.send(data,to,self)
         dprint("dtype: %s"%dtype)
+        if self.packetlogging:
+            self.log_send.append([data,dtype,to])
         self.peerObj(to).recvPacket(data,dtype,self)
     def sendEncoded(self,raw,to=None):
         if to is None:

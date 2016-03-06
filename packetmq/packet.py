@@ -37,6 +37,12 @@ def dprint(msg): # pylint:disable=unused-argument
 class BasePacket(object):
     def __init__(self):
         self.bypassStateCheck = False
+        self.name = None
+        self.numid = None
+    def setName(self,name):
+        self.name = name
+    def setNumid(self,numid):
+        self.numid = numid
     def dataEncoded(self,arg,*args,**kwargs):
         if isinstance(arg,str):
             return arg
@@ -144,6 +150,7 @@ class HandshakePubidsPacket(InternalPacket):
         if to.peerObj(fromid).getState() != "idcheck":
             return [packet,fromid,to]
         elif packet["adapt"]==to.registry.adaptivePacketIds:
+            dprint("softquit with sameadaptivepolicy: fromid=%s to=%s"%(fromid,to))
             to.softquit(fromid,"reason.sameadaptivepolicy")
         elif packet["adapt"] and not to.registry.adaptivePacketIds:
             # Ids have already been sent, no further action is required.
@@ -175,5 +182,5 @@ class SoftquitPacket(InternalPacket):
     def onReceive(self,packet,fromid,to,*args,**kwargs):
         super(SoftquitPacket,self).onReceive(packet,fromid,to,*args,**kwargs)
         to.peerObj(fromid).transport.loseConnection()
-        print("Softquit: %s"%packet["reason"])
+        dprint("Softquit: %s"%packet["reason"])
         return [packet,fromid,to]

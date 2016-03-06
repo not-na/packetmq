@@ -28,7 +28,10 @@ import threading
 
 import bidict
 
+from zope.interface import implementer
+
 from twisted.internet.protocol import Factory, ClientFactory, Protocol
+from twisted.internet.address import IAddress
 from twisted.protocols.basic import Int32StringReceiver
 
 def dprint(msg): # pylint:disable=unused-argument
@@ -36,10 +39,11 @@ def dprint(msg): # pylint:disable=unused-argument
 
 
 class PacketProtocol(Int32StringReceiver):
-    def __init__(self,parent):
+    def __init__(self,parent,addr):
         #super(PacketProtocol,self).__init__()
         self.parent = parent
         self.state = "connMade"
+        self.addr = addr
     def connectionMade(self):
         dprint("Connection Made...")
         self.parent.initConnection(self)
@@ -73,9 +77,10 @@ class PacketFactory(Factory):
     def startedConnecting(self,arg):
         pass
     def buildProtocol(self,addr): # pylint:disable=unused-argument
-        return self.proto(self.parent)
+        return self.proto(self.parent,addr)
     def addClient(self,client):
         self.cllock.acquire()
+        dprint("sesscounter: %s;client: %s"%(self.sesscounter,client))
         self.clients[self.sesscounter]=client
         self.sesscounter+=1
         self.cllock.release()
@@ -96,7 +101,7 @@ class ClientPacketFactory(ClientFactory):
     def startedConnecting(self,arg):
         pass
     def buildProtocol(self,addr): # pylint:disable=unused-argument
-        return self.proto(self.parent)
+        return self.proto(self.parent,addr)
     def addClient(self,client):
         self.cllock.acquire()
         self.clients[self.sesscounter]=client
@@ -110,11 +115,17 @@ class ClientPacketFactory(ClientFactory):
 
 # Memory Protocols
 
+@implementer(IAddress)
+class MemoryAddress():
+    def __init__(self):
+        self.host = "memory:0"
+
 class MemoryPacketProtocol(Protocol):
-    def __init__(self,parent):
+    def __init__(self,parent,addr):
         #super(MemoryPacketProtocol,self).__init__()
         self.parent = parent
         self.state = "connMade"
+        self.addr = addr
     def connectionMade(self):
         self.parent.initConnection(self)
         self.parent.factory.addClient(self)
@@ -136,7 +147,7 @@ class MemoryPacketFactory(Factory):
         self.sesscounter = 0
         self.cllock = threading.Lock()
     def buildProtocol(self,addr): # pylint:disable=unused-argument
-        return self.proto(self.parent)
+        return self.proto(self.parent,addr)
     def addClient(self,client):
         self.cllock.acquire()
         self.clients[self.sesscounter]=client
@@ -157,7 +168,7 @@ class MemoryClientPacketFactory(ClientFactory):
         self.sesscounter = 0
         self.cllock = threading.Lock()
     def buildProtocol(self,addr): # pylint:disable=unused-argument
-        return self.proto(self.parent)
+        return self.proto(self.parent,addr)
     def addClient(self,client):
         self.cllock.acquire()
         self.clients[self.sesscounter]=client

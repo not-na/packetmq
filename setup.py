@@ -28,7 +28,7 @@ with open('pypi.rst') as file:
     long_description = file.read()
 
 setup(name='packetmq',
-      version='0.1.3',
+      version='0.1.5',
       description='Packet based networking',
       url="http://packetmq.readthedocs.org/en/latest/",
       long_description=long_description,
