@@ -53,7 +53,7 @@ To add new packets, we just call :py:meth:`packetmq.PacketRegistry.addPacket()` 
    >>> reg.packetInt(mypacket)
    17
 
-You can also create new packets by subclassing :py:class:´packetmq.packet.Packet`\ .
+You can also create new packets by subclassing :py:class:`packetmq.packet.Packet`\ .
 
 Sending Data to Peers
 ---------------------
