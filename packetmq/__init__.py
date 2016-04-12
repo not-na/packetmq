@@ -206,7 +206,7 @@ class Server(Peer):
     def listen(self,port):
         reactor.listenTCP(port,self.factory)
     def runAsync(self):
-        self.thread = threading.Thread(name="Server thread",target=self.run)
+        self.thread = threading.Thread(name="Server thread",target=self.run,kwargs={"signalhandlers":0})
         self.thread.daemon = True
         self.thread.start()
 

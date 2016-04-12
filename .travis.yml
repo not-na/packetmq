@@ -6,7 +6,13 @@ cache:
  directories:
   - $HOME/.cache/pip
 
+before_install:
+  - pip install codecov
+
 script:
  - "trial --reporter=text --rterrors packetmq.test.MemServerTestCase"
  - "trial --reporter=text --rterrors packetmq.test.PacketRegistryTestCase"
  - "trial --reporter=text --rterrors packetmq.test.TCPServerTestCase"
+
+after_success:
+  - codecov
