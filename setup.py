@@ -22,13 +22,21 @@
 #  
 #  
 
-from distutils.core import setup
+try:
+    from setuptools import setup
+    print("Using setuptools")
+except ImportError:
+    print("Setuptools not installed!")
+    from distutils.core import setup
 
-with open('pypi.rst') as file:
-    long_description = file.read()
+try:
+    with open('pypi.rst') as file:
+        long_description = file.read()
+except IOError:
+    long_description = 'Packet based networking'
 
 setup(name='packetmq',
-      version='0.1.5',
+      version='0.1.6a1',
       description='Packet based networking',
       url="http://packetmq.readthedocs.org/en/latest/",
       long_description=long_description,

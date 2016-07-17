@@ -8,6 +8,7 @@ _trial_temp/*
 build/*
 dist/*
 tests/*
+packetmq.egg-info/
 
 MANIFEST
 
