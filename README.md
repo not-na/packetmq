@@ -1,3 +1,5 @@
+# This repository is deprecated, please use [peng3dnet](https://github.com/not-na/peng3dnet) instead
+
 # packetmq
 
 [![Join the chat at https://gitter.im/not-na/packetmq](https://badges.gitter.im/not-na/packetmq.svg)](https://gitter.im/not-na/packetmq?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
